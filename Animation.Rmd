@@ -1,0 +1,53 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(ggplot2)
+library(gganimate)
+library(babynames)
+library(hrbrthemes)
+library(viridis)
+library(hrbrthemes)
+
+Area <- c("Aerospace & Radar", "Electronic & Semiconductors", "Software", "Metal & Metallurgy", "Nanotechnology", "Oil & Gas", "Pharmaceuticals", "Plastics & Rubbers", "Sustainable Energy")
+Freq <- c(60, 29, 10, 18, 25, 15, 30, 19, 16)
+
+dt <- data.frame(Area, Freq)
+write.csv(dt, "D:\\Google Drive\\Final presentation\\Harvard Journal\\EHsan\\ehsan.csv")
+
+
+dt <- read.csv("D:\\Google Drive\\Final presentation\\Harvard Journal\\EHsan\\ehsan.csv")
+```
+
+```{r}
+# animation
+options(scipen=10000)
+
+ggplot(dt, aes(x=reorder(Area, -Freq), y = Freq)) + 
+  geom_bar(stat='identity') + coord_flip()
+ 
+# Make a ggplot, but add Year=year: one image per year
+p <- ggplot(dt, aes(x=reorder(Area, Freq), y = Freq)) + 
+  geom_bar(stat='identity', fill = "orange1") + geom_text(aes(x=Area, y = Freq + 2 , label = Number)) +
+# + geom_text(aes(label = Number), position=position_dodge(width=0.9), vjust=1)  
+  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), axis.text.y = element_text(face = "bold", size = 15), axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
+  xlab("") +
+  # theme(axis.text.y  = element_text(vjust=0.5, size=8)) +
+  ylab("") +
+  coord_flip() +
+  # gganimate specific bits:
+  transition_states(
+    Year,
+    transition_length = 2,
+    state_length = 1
+  ) +
+  ease_aes('sine-in-out')
+
+animate(p, duration = 5, fps = 40, width = 1000, height = 700, renderer = gifski_renderer())
+# Save at gif:
+anim_save("D:\\Google Drive\\Final presentation\\Harvard Journal\\EHsan\\bar9.gif")
+```
+
